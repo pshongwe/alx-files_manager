@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { User } = require('../utils/dbUtils');
+const { User } = require('../utils/db');
 
 class UsersController {
   static async postNew(req, res) {
