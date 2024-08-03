@@ -32,6 +32,24 @@ class UsersController {
     } catch (err) {
       return res.status(500).send({ error: 'Error creating user' });
     }
+
+    static async getMe(req, res) {
+        const token = req.header('X-Token');
+        if (!token) {
+            return res.status(401).send({ error: 'Unauthorized' });
+        }
+
+        const userId = await redisClient.get(`auth_${token}`);
+        if (!userId) {
+            return res.status(401).send({ error: 'Unauthorized' });
+        }
+
+        const user = await User.findById(userId).select('email _id');
+        if (!user) {
+            return res.status(401).send({ error: 'Unauthorized' });
+        }
+
+        return res.status(200).send({ email: user.email, id: user._id });
   }
 }
 
