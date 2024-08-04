@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const { User } = require('../utils/db');
+const redisClient = require('../utils/redis');
 
 class UsersController {
   static async postNew(req, res) {
@@ -31,6 +32,29 @@ class UsersController {
       return res.status(201).send({ email: newUser.email, id: newUser._id });
     } catch (err) {
       return res.status(500).send({ error: 'Error creating user' });
+    }
+  }
+
+  static async getMe(req, res) {
+    const token = req.header('X-Token');
+    if (!token) {
+      return res.status(401).send({ error: 'Unauthorized' });
+    }
+
+    try {
+      const userId = await redisClient.get(`auth_${token}`);
+      if (!userId) {
+        return res.status(401).send({ error: 'Unauthorized' });
+      }
+
+      const user = await User.findById(userId).select('email _id');
+      if (!user) {
+        return res.status(401).send({ error: 'Unauthorized' });
+      }
+
+      return res.status(200).send({ email: user.email, id: user._id });
+    } catch (err) {
+      return res.status(500).send({ error: 'Error retrieving user' });
     }
   }
 }
