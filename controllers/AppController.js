@@ -1,7 +1,6 @@
 const { isAlive: isDbAlive, nbUsers, nbFiles } = require('../utils/db');
 const { isAlive: isRedisAlive } = require('../utils/redis');
 
-
 class AppController {
   static async getStatus(req, res) {
     const dbStatus = await isDbAlive();
