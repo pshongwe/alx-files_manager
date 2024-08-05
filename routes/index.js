@@ -3,7 +3,7 @@ import AppController from '../controllers/AppController';
 import UsersController from '../controllers/UsersController';
 import AuthController from '../controllers/AuthController';
 
-function routeControl(app) {
+function routeForward(app) {
   const router = express.Router();
 
   app.use('/', router);
@@ -17,4 +17,4 @@ function routeControl(app) {
   router.get('/users/me', UsersController.getMe);
 }
 
-export default routeControl;
+export default routeForward;
