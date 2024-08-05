@@ -1,6 +1,6 @@
-const crypto = require('crypto');
-const { User } = require('../utils/db');
-const redisClient = require('../utils/redis');
+import crypto from 'crypto';
+import dbClient from '../utils/db';
+import redisClient from '../utils/redis';
 
 class UsersController {
   static async postNew(req, res) {
@@ -15,17 +15,14 @@ class UsersController {
     }
 
     try {
-      const existingUser = await User.findOne({ email });
+      const existingUser = await dbClient.userCollection.findOne({ email });
       if (existingUser) {
         return res.status(400).send({ error: 'Already exist' });
       }
 
       const hashedPassword = crypto.createHash('sha1').update(password).digest('hex');
 
-      const newUser = new User({
-        email,
-        password: hashedPassword,
-      });
+      const newUser = await dbClient.userCollection.findOne({ email, password: hashedPassword });
 
       await newUser.save();
 
@@ -47,7 +44,7 @@ class UsersController {
         return res.status(401).send({ error: 'Unauthorized' });
       }
 
-      const user = await User.findById(userId).select('email _id');
+      const user = await dbClient.userCollection.findById(userId).select('email _id');
       if (!user) {
         return res.status(401).send({ error: 'Unauthorized' });
       }
@@ -59,4 +56,4 @@ class UsersController {
   }
 }
 
-module.exports = UsersController;
+export default UsersController;

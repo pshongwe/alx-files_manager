@@ -1,14 +1,12 @@
-const express = require('express');
+import express from 'express';
+import routeControl from './routes/index';
 
 const app = express();
-const port = process.env.PORT || 5000;
-
-// Import routes
-const router = require('./routes/index');
+const port = process.env.PORT || 5001;
 
 // Use routes
 app.use(express.json());
-app.use('/', router);
+routeControl(app);
 
 // Start server
 app.listen(port, () => {
