@@ -1,7 +1,9 @@
 import { MongoClient } from 'mongodb';
-import dotenv from 'dotenv';
 
-dotenv.config();
+const host = process.env.DB_HOST || 'localhost';
+const port = process.env.DB_PORT || 27017;
+const database = process.env.DB_DATABASE || 'files_manager';
+const url = `mongodb://${host}:${port}`;
 
 /**
  * MongoDB Client class
@@ -11,15 +13,12 @@ class DBClient {
    * Creates MongoDB client instance.
    */
   constructor() {
-    const host = process.env.DB_HOST || 'localhost';
-    const port = process.env.DB_PORT || 27017;
-    const database = process.env.DB_DATABASE || 'files_manager';
-
-    const url = `mongodb://${host}:${port}`;
     this.client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
     this.client.connect()
       .then(() => {
         this.db = this.client.db(database);
+        this.userCollection = this.db.collection('users');
+        this.fileCollection = this.db.collection('files');
         this.clientConnected = true;
       })
       .catch((error) => {
@@ -42,7 +41,7 @@ class DBClient {
    */
   async nbUsers() {
     if (!this.isAlive()) return 0;
-    return this.client.db().collection('users').countDocuments();
+    return this.userCollection.countDocuments();
   }
 
   /**
@@ -51,7 +50,7 @@ class DBClient {
    */
   async nbFiles() {
     if (!this.isAlive()) return 0;
-    return this.client.db().collection('files').countDocuments();
+    return this.fileCollection.countDocuments();
   }
 }
 
