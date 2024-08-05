@@ -22,12 +22,11 @@ class UsersController {
 
       const hashedPassword = crypto.createHash('sha1').update(password).digest('hex');
 
-      const newUser = await dbClient.userCollection.findOne({ email, password: hashedPassword });
-
-      await newUser.save();
+      const newUser = await dbClient.userCollection.insertOne({ email, password: hashedPassword });
 
       return res.status(201).send({ email: newUser.email, id: newUser._id });
     } catch (err) {
+      console.log(err);
       return res.status(500).send({ error: 'Error creating user' });
     }
   }
