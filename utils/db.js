@@ -51,7 +51,7 @@ class DBClient {
    */
   async nbFiles() {
     if (!this.isAlive()) return 0;
-    return this.clint.db().collection('files').countDocuments();
+    return this.client.db().collection('files').countDocuments();
   }
 }
 
