@@ -19,7 +19,6 @@ class DBClient {
         this.db = this.client.db(database);
         this.userCollection = this.db.collection('users');
         this.fileCollection = this.db.collection('files');
-        this.clientConnected = true;
       })
       .catch((error) => {
         console.error(`MongoDB client error: ${error}`);
@@ -32,7 +31,7 @@ class DBClient {
    * @returns {boolean} - True if the MongoDB client is connected, otherwise false
    */
   isAlive() {
-    return this.clientConnected;
+    return !!this.db;
   }
 
   /**
