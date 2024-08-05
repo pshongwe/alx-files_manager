@@ -4,11 +4,11 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Import routes
-const routeIndex = require('./routes/index');
+const router = require('./routes/index');
 
 // Use routes
 app.use(express.json());
-routeIndex(app);
+app.use('/', router);
 
 // Start server
 app.listen(port, () => {
