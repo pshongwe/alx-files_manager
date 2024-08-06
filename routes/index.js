@@ -17,6 +17,9 @@ function routeForward(app) {
   router.get('/disconnect', AuthController.getDisconnect);
   router.get('/users/me', UsersController.getMe);
   router.post('/files', FilesController.postUpload);
+  router.get('/files/:id', FilesController.getFile);
+  router.put('/files/:id', FilesController.putFile);
+  router.delete('/files/:id', FilesController.deleteFile);
 }
 
 export default routeForward;
