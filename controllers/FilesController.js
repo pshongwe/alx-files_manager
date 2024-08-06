@@ -148,6 +148,68 @@ class FilesController {
       return res.status(500).json({ error: 'Internal Server Error' });
     }
   }
+
+  // New endpoint for publishing a file
+  static async putPublish(req, res) {
+    try {
+      // Retrieve the user based on the token
+      const user = await UsersController.getUserFromToken(req.headers.authorization);
+      if (!user) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      // Retrieve the file
+      const file = await this.getFileById(req.params.id);
+      if (!file) {
+        return res.status(404).json({ error: 'File not found' });
+      }
+
+      // Check if the file belongs to the user
+      if (file.userId !== user.id) {
+        return res.status(403).json({ error: 'Forbidden' });
+      }
+
+      // Update the file's isPublic status to true
+      file.isPublic = true;
+      await file.save();
+
+      return res.status(200).json(file);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+
+  // New endpoint for unpublishing a file
+  static async putUnpublish(req, res) {
+    try {
+      // Retrieve the user based on the token
+      const user = await UsersController.getUserFromToken(req.headers.authorization);
+      if (!user) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      // Retrieve the file
+      const file = await this.getFileById(req.params.id);
+      if (!file) {
+        return res.status(404).json({ error: 'File not found' });
+      }
+
+      // Check if the file belongs to the user
+      if (file.userId !== user.id) {
+        return res.status(403).json({ error: 'Forbidden' });
+      }
+
+      // Update the file's isPublic status to false
+      file.isPublic = false;
+      await file.save();
+
+      return res.status(200).json(file);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
 }
 
 export default FilesController;

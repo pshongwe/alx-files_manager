@@ -20,6 +20,8 @@ function routeForward(app) {
   router.get('/files/:id', FilesController.getFile);
   router.put('/files/:id', FilesController.putFile);
   router.delete('/files/:id', FilesController.deleteFile);
+  router.put('/files/:id', FilesController.putPublish);
+  router.put('/files/:id', FilesController.putUnpublish);
 }
 
 export default routeForward;
