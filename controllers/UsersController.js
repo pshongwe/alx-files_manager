@@ -15,6 +15,7 @@ class UsersController {
       return res.status(400).send({ error: 'Missing password' });
     }
 
+    let result;
     try {
       const existingUser = await dbClient.userCollection.findOne({ email });
       if (existingUser) {
@@ -22,16 +23,15 @@ class UsersController {
       }
 
       const hashedPassword = sha1(password);
-      const newUser = await dbClient.userCollection.insertOne({
-        email,
-        password: hashedPassword,
-      });
+      const newUser = await dbClient.userCollection.insertOne({ email, password: hashedPassword });
 
-      return res.status(201).send(newUser);
+      result = { id: newUser.insertedId, email };
     } catch (err) {
       console.log(err);
       return res.status(500).send({ error: 'Error creating user' });
     }
+
+    return res.status(201).send(result);
   }
 
   static async getMe(req, res) {
@@ -46,9 +46,7 @@ class UsersController {
         return res.status(401).send({ error: 'Unauthorized' });
       }
 
-      const user = await dbClient.userCollection.findOne({
-        _id: ObjectId(userId),
-      });
+      const user = await dbClient.userCollection.findOne({ _id: ObjectId(userId) });
 
       if (!user) {
         return res.status(401).send({ error: 'Unauthorized' });
