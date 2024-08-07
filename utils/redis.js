@@ -1,4 +1,5 @@
 import { createClient } from 'redis';
+import { promisify } from 'util';
 
 /**
  * Redis Client class
@@ -9,6 +10,7 @@ class RedisClient {
    */
   constructor() {
     this.client = createClient();
+    this.getAsync = promisify(this.client.get).bind(this.client);
     this.clientConnected = true;
     this.client.on('error', (error) => {
       console.error(`Redis client error: ${error}`);
@@ -33,15 +35,8 @@ class RedisClient {
    * @returns {Promise<string>} - The value associated with the key
    */
   async get(key) {
-    return new Promise((resolve, reject) => {
-      this.client.get(key, (error, value) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(value);
-        }
-      });
-    });
+    const value = await this.getAsync(key);
+    return value;
   }
 
   /**
@@ -49,18 +44,9 @@ class RedisClient {
    * @param {string} key - The key to set in Redis
    * @param {string} value - The value to set in Redis
    * @param {number} duration - The expiration time in seconds
-   * @returns {Promise<string>} - The result of the set operation
    */
   async set(key, value, duration) {
-    return new Promise((resolve, reject) => {
-      this.client.setex(key, duration, value, (error, result) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(result);
-        }
-      });
-    });
+    this.client.setex(key, duration, value);
   }
 
   /**
