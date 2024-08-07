@@ -22,8 +22,10 @@ class UsersController {
       }
 
       const hashedPassword = sha1(password);
-
-      const newUser = await dbClient.userCollection.insertOne({ email, password: hashedPassword });
+      const newUser = await dbClient.userCollection.insertOne({
+        email,
+        password: hashedPassword,
+      });
 
       return res.status(201).send({ email: newUser.email, id: newUser._id });
     } catch (err) {
@@ -52,7 +54,7 @@ class UsersController {
         return res.status(401).send({ error: 'Unauthorized' });
       }
 
-      return res.status(200).send({ email: user.email, id: user._id });
+      return res.status(201).send({ email: user.email, id: user._id });
     } catch (err) {
       return res.status(500).send({ error: 'Error retrieving user' });
     }
