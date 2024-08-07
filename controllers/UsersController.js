@@ -27,7 +27,7 @@ class UsersController {
         password: hashedPassword,
       });
 
-      return res.status(201).send({ email: newUser.email, id: newUser._id });
+      return res.status(201).send(newUser);
     } catch (err) {
       console.log(err);
       return res.status(500).send({ error: 'Error creating user' });
