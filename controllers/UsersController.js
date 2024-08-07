@@ -52,7 +52,7 @@ class UsersController {
         return res.status(401).send({ error: 'Unauthorized' });
       }
 
-      return res.status(201).send({ email: user.email, id: user._id });
+      return res.status(201).send({ id: user._id, email: user.email });
     } catch (err) {
       return res.status(500).send({ error: 'Error retrieving user' });
     }
