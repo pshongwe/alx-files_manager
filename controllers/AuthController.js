@@ -1,11 +1,12 @@
-import crypto from 'crypto';
+import sha1 from 'sha1';
 import { v4 as uuidv4 } from 'uuid';
 import dbClient from '../utils/db';
 import redisClient from '../utils/redis';
 
 class AuthController {
   static async getConnect(req, res) {
-    const authHeader = req.header('Authorization');
+    const authHeader = req.header('Authorization') || '';
+
     if (!authHeader || !authHeader.startsWith('Basic ')) {
       return res.status(401).send({ error: 'Unauthorized' });
     }
@@ -18,7 +19,7 @@ class AuthController {
       return res.status(401).send({ error: 'Unauthorized' });
     }
 
-    const hashedPassword = crypto.createHash('sha1').update(password).digest('hex');
+    const hashedPassword = sha1(password);
     const user = await dbClient.userCollection.findOne({ email, password: hashedPassword });
 
     if (!user) {
@@ -26,7 +27,8 @@ class AuthController {
     }
 
     const token = uuidv4();
-    await redisClient.set(`auth_${token}`, user._id.toString(), 'EX', 24 * 60 * 60);
+
+    await redisClient.set(`auth_${token}`, user._id.toString(), 24 * 60 * 60);
 
     return res.status(200).send({ token });
   }

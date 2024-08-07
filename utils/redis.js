@@ -10,10 +10,9 @@ class RedisClient {
    */
   constructor() {
     this.client = createClient();
-    this.getAsync = promisify(this.client.get).bind(this.client);
     this.clientConnected = true;
     this.client.on('error', (error) => {
-      console.error(`Redis client error: ${error}`);
+      console.error(`Redis client error: ${error.message}`);
       this.clientConnected = false;
     });
     this.client.on('connect', () => {
@@ -32,11 +31,10 @@ class RedisClient {
   /**
    * Get value from Redis by key
    * @param {string} key - The key to retrieve from Redis
-   * @returns {Promise<string>} - The value associated with the key
+   * @return {string} - The value associated with the key
    */
   async get(key) {
-    const value = await this.getAsync(key);
-    return value;
+    return promisify(this.client.GET).bind(this.client)(key);
   }
 
   /**
@@ -44,26 +42,20 @@ class RedisClient {
    * @param {string} key - The key to set in Redis
    * @param {string} value - The value to set in Redis
    * @param {number} duration - The expiration time in seconds
+   * @return {undefined}  No return
    */
   async set(key, value, duration) {
-    this.client.setex(key, duration, value);
+    await promisify(this.client.SETEX)
+      .bind(this.client)(key, duration, value);
   }
 
   /**
    * Delete value from Redis by key
    * @param {string} key - The key to delete from Redis
-   * @returns {Promise<number>} - The number of keys that were removed
+   * @return {undefined}  No return
    */
   async del(key) {
-    return new Promise((resolve, reject) => {
-      this.client.del(key, (error, result) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(result);
-        }
-      });
-    });
+    await promisify(this.client.DEL).bind(this.client)(key);
   }
 }
 
