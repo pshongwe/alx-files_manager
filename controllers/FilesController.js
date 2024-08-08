@@ -1,7 +1,6 @@
 import { ObjectId } from 'mongodb';
 import mime from 'mime-types';
 import Queue from 'bull';
-import { promises as fsPromises } from 'fs';
 import extras from '../utils/extras';
 
 const FOLDER_PATH = process.env.FOLDER_PATH || '/tmp/files_manager';
