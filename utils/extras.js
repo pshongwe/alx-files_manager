@@ -13,6 +13,7 @@ const extras = {
    */
   async getUser(query) {
     const user = await dbClient.usersCollection.findOne(query);
+
     return user;
   },
 
@@ -22,15 +23,15 @@ const extras = {
    * @return {object} object containing userId and
    * redis key for token
    */
-  async getUserIdAndKey(request) {
+  async getUserIdAndKey(req) {
     const obj = { userId: null, key: null };
+    const xToken = req.header('X-Token');
 
-    const xToken = request.header('X-Token');
-
-    if (!xToken) return obj;
+    if (!xToken) {
+      return obj;
+    }
 
     obj.key = `auth_${xToken}`;
-
     obj.userId = await redisClient.get(obj.key);
 
     return obj;
