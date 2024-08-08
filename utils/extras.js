@@ -12,7 +12,7 @@ const extras = {
    * @return {object} user document object
    */
   async getUser(query) {
-    const user = await dbClient.usersCollection.findOne(query);
+    const user = await dbClient.userCollection.findOne(query);
 
     return user;
   },
@@ -110,7 +110,7 @@ const extras = {
    * @return {Array} list of files
    */
   async getFilesOfParentId(query) {
-    const fileList = await dbClient.filesCollection.aggregate(query);
+    const fileList = await dbClient.fileCollection.aggregate(query);
     return fileList;
   },
 
@@ -153,7 +153,7 @@ const extras = {
       }
     }
 
-    const result = await dbClient.filesCollection.insertOne(query);
+    const result = await dbClient.fileCollection.insertOne(query);
     const file = this.processFile(query);
     const newFile = { id: result.insertedId, ...file };
 
@@ -221,7 +221,7 @@ const extras = {
    * @return {object} file
    */
   async getFileFromDb(query) {
-    const file = await dbClient.filesCollection.findOne(query);
+    const file = await dbClient.fileCollection.findOne(query);
     return file;
   },
 };
