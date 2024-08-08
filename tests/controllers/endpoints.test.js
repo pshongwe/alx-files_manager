@@ -9,7 +9,7 @@
 /* eslint-disable import/extensions */
 import { expect } from 'chai';
 import request from 'supertest';
-import app from '../../routes/index';
+import app from '../../server';
 
 describe('API Endpoints', () => {
   let userToken;
